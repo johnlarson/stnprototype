@@ -1,13 +1,29 @@
-const app = require('../app');
+"use strict";
+
+const gulp = require('gulp');
 const debug = require('debug')('stn:server');
 const http = require('http');
-const gulp = require('gulp');
+const watch = require('gulp-watch');
+const exclude = require('gulp-ignore').exclude;
+const wrench = require('wrench');
+const webpack = require('webpack');
+const path = require('path');
+const gutil = require('gulp-util');
+const fs = require('fs');
+const cheerio = require('cheerio');
+const babel = require('gulp-babel');
+const enableDestroy = require('server-destroy');
+
+const DEFAULT_PORT = 3000;
+
+let server;
+let port;
 
 gulp.task('default', ['dev']);
 
 gulp.task('dev', ['build-dev', 'dev-server']);
 
-gulp.task('build-dev', ['copy-dev', 'bundle-dev', 'babel-server-dev']);
+gulp.task('build-dev', ['copy-dev', 'bundle-dev']);
 
 gulp.task('copy-dev', () => {
 	return gulp.src(['src/**/*', 'src/**/.*'])
@@ -30,7 +46,6 @@ gulp.task('bundle-dev', callback => {
 		output: {
 			path: path.join(__dirname, 'dist'),
 			filename: '[name]',
-			publicPath: `http://localhost:${port}/`
 		},
 		module: {
 			loaders: [
@@ -39,11 +54,13 @@ gulp.task('bundle-dev', callback => {
 					exclude: /node_modules/,
 					loader: 'babel-loader',
 					query: {
-						presets: ['es2015', 'react']
+						presets: ['es2016', 'react']
 					}
 				},
 			]
 		},
+		watch: true,
+		devtool: 'inline-source-map'
 	},
 	(err, stats) => {
 		gutil.log('[webpack]', stats.toString({}));
@@ -52,11 +69,33 @@ gulp.task('bundle-dev', callback => {
 });
 
 gulp.task('babel-server-dev', () => {
-
+	return gulp.src('src/**/*.js')
+		.pipe(exclude('public/**/*.js'))
+		.pipe(babel({
+			presets: ['es2015']
+		}))
+		.pipe(gulp.dest('./dist'));
 });
 
-gulp.task('dev-server', () => {
+gulp.task('dev-server', ['start-dev-server'], () => {
+    watch('src/**/*.js', () => {
+    	gutil.log('SERVER:');
+    	gutil.log(server);
+		server.destroy();
+		gulp.start('start-dev-server');
+	});
+});
 
+gulp.task('start-dev-server', ['babel-server-dev'], () => {
+	let app = require('./dist/app');
+    let defaultPortString = Number.parseInt(DEFAULT_PORT);
+    port = normalizePort(process.env.PORT || defaultPortString);
+    app.set('port', port);
+    server = http.createServer(app);
+    enableDestroy(server);
+    server.listen(port);
+    server.on('error', onServerError);
+    server.on('listening', onServerListening);
 });
 
 function getClientJsPaths() {
@@ -96,61 +135,24 @@ function resolveScriptPath(htmlPath, jsPath) {
 	return path.join(dirName, jsPath);
 }
 
-/**
- * Get port from environment and store in Express.
- */
-
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
-
-/**
- * Create HTTP server.
- */
-
-var server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
-
-/**
- * Normalize a port into a number, string, or false.
- */
-
 function normalizePort(val) {
-	var port = parseInt(val, 10);
-
+	let port = parseInt(val, 10);
 	if (isNaN(port)) {
-		// named pipe
 		return val;
 	}
-
 	if (port >= 0) {
-		// port number
 		return port;
 	}
-
 	return false;
 }
 
-/**
- * Event listener for HTTP server "error" event.
- */
-
-function onError(error) {
+function onServerError(error) {
 	if (error.syscall !== 'listen') {
 		throw error;
 	}
-
-	var bind = typeof port === 'string'
+	let bind = typeof port === 'string'
 		? 'Pipe ' + port
 		: 'Port ' + port;
-
-	// handle specific listen errors with friendly messages
 	switch (error.code) {
 		case 'EACCES':
 			console.error(bind + ' requires elevated privileges');
@@ -165,13 +167,9 @@ function onError(error) {
 	}
 }
 
-/**
- * Event listener for HTTP server "listening" event.
- */
-
-function onListening() {
-	var addr = server.address();
-	var bind = typeof addr === 'string'
+function onServerListening() {
+	let addr = server.address();
+	let bind = typeof addr === 'string'
 		? 'pipe ' + addr
 		: 'port ' + addr.port;
 	debug('Listening on ' + bind);
