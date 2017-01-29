@@ -12,7 +12,7 @@ const gutil = require('gulp-util');
 const fs = require('fs');
 const cheerio = require('cheerio');
 const babel = require('gulp-babel');
-const enableDestroy = require('server-destroy');
+const enableTerminate = require('server-terminate');
 
 const DEFAULT_PORT = 3000;
 
@@ -79,10 +79,11 @@ gulp.task('babel-server-dev', () => {
 
 gulp.task('dev-server', ['start-dev-server'], () => {
     watch('src/**/*.js', () => {
-    	gutil.log('SERVER:');
-    	gutil.log(server);
-		server.destroy();
-		gulp.start('start-dev-server');
+    	gutil.log('WATCH TRIGGERED!');
+		server.terminate(() => {
+			gutil.log('TERMINATED!');
+			gulp.start('start-dev-server');
+		});
 	});
 });
 
@@ -92,7 +93,7 @@ gulp.task('start-dev-server', ['babel-server-dev'], () => {
     port = normalizePort(process.env.PORT || defaultPortString);
     app.set('port', port);
     server = http.createServer(app);
-    enableDestroy(server);
+    enableTerminate(server);
     server.listen(port);
     server.on('error', onServerError);
     server.on('listening', onServerListening);
