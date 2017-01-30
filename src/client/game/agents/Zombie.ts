@@ -24,7 +24,7 @@ export default class Zombie extends Agent {
 		this.goRight() ||
 		this.goUp() ||
 		this.goDown() ||
-		this.goRight();
+		this.goLeft();
 	}
 
 }
