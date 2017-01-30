@@ -10,6 +10,7 @@ export default class Agent {
 	game: Game;
 	
 	constructor(x, y, game) {
+		console.log('constructing');
 		this.x = x;
 		this.y = y;
 		this.display = this.getSprite();

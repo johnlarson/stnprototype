@@ -17,7 +17,7 @@ export default class Game {
 		stage.addChild(this.display);
 		this.initTerrain(data.terrain);
 		this.initPlayer(data.player);
-		//this.initZombies(data.zombies);
+		this.initZombies(data.zombies);
 	}
 
 	initTerrain(terrain) {
@@ -46,10 +46,10 @@ export default class Game {
 
 	initZombies(data) {
 		this.zombies = [];
-		for(let zombieData in data) {
-			let zombie = new Zombie(data.x, data.y, this)
+		for(let zombieData of data) {
+			let zombie = new Zombie(zombieData.x, zombieData.y, this)
 			this.zombies.push(zombie);
-			this.display.addChild(zombie);
+			this.display.addChild(zombie.display);
 		}
 	}
 
