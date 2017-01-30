@@ -1,9 +1,13 @@
-import * as socketIO from 'socket.io-client';
+import * as io from 'socket.io-client';
 
-let io = socketIO('http://localhost:3000');
+let socket = io('http://localhost:3000');
 
-io.on('connect', () => {
+socket.on('connect', () => {
 	console.log('connected');
+});
+
+socket.on('msg', msg => {
+	console.log('hello:', msg);
 });
 
 console.log('hello.');

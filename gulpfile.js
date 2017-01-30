@@ -20,6 +20,7 @@ require('source-map-support').install();
 
 const DEFAULT_PORT = 3000;
 
+let serverFactory;
 let server;
 let port;
 
@@ -91,14 +92,20 @@ gulp.task('bundle', ['build'], callback => {
 });
 
 gulp.task('server', ['start-dev-server'], () => {
-    watch('src/**/*.js', () => {
+	console.log('SERVER');
+    watch('src/**/*.ts', () => {
+    	console.log('WATCH');
 		server.terminate(() => {
+			console.log('TERMINATED');
 			gulp.start('start-dev-server');
+			gulp.start('copy');
+			gulp.start('bundle');
 		});
 	});
 });
 
 gulp.task('start-dev-server', ['compile-server'], () => {
-	require('./dist/server');
+	server = require('./dist/server').createServer();
+	enableTerminate(server);
 });
 

@@ -5,7 +5,7 @@ export default (server) => {
 	let io = socketIO(server);
 
 	io.on('connection', socket => {
-		socket.emit('games', {a: 'hello'});
+		socket.emit('msg', {a: 'hello'});
 	});
 
 }

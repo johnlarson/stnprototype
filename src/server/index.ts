@@ -7,14 +7,20 @@ declare const process;
 
 const DEFAULT_PORT = 3000
 
-let defaultPortString = Number(DEFAULT_PORT);
-let port = normalizePort(process.env.PORT || defaultPortString);
-app.set('port', port);
-let server = http.createServer(app);
-server.listen(port);
-server.on('error', onServerError);
-server.on('listening', onServerListening);
-io(server);
+let server;
+let port;
+
+export function createServer() {
+    let defaultPortString = Number(DEFAULT_PORT);
+    port = normalizePort(process.env.PORT || defaultPortString);
+    app.set('port', port);
+    server = http.createServer(app);
+    server.listen(port);
+    server.on('error', onServerError);
+    server.on('listening', onServerListening);
+    io(server);
+    return server;
+}
 
 function normalizePort(val) {
     let port = parseInt(val, 10);
