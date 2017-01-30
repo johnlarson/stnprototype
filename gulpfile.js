@@ -35,7 +35,7 @@ gulp.task('copy', () => {
 		.pipe(gulp.dest('dist'));
 });
 
-gulp.task('compile-server', ['compile-shared'], () => {
+gulp.task('compile-server', () => {
 	return gulp.src('src/server/**/*.ts')
 		.pipe(sourcemaps.init())
 		.pipe(typescript({
@@ -83,7 +83,9 @@ gulp.task('bundle', ['build'], callback => {
 		output: {
 			path: path.join(__dirname, 'dist/client'),
 			filename: '[name].js',
-		}
+		},
+		sourcemaps: true,
+		devtool: 'inline-source-map'
 	},
 	(err, stats) => {
 		gutil.log('[webpack]', stats.toString({}));
