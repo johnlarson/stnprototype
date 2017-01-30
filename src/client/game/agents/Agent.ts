@@ -9,8 +9,7 @@ export default class Agent {
 	display: pixi.Sprite;
 	game: Game;
 	
-	constructor(x, y, game) {
-		console.log('constructing');
+	constructor(x:number, y:number, game:Game) {
 		this.x = x;
 		this.y = y;
 		this.display = this.getSprite();
@@ -42,7 +41,7 @@ export default class Agent {
 	}
 
 	tryMove(x, y) {
-		let game = this.game;
+		let game:Game = this.game;
 		if(game.terrain[y][x] instanceof Wall) return false;
 		if(x === game.player.x && y === game.player.y) return false;
 		for(let zombie of game.zombies) {

@@ -1,18 +1,19 @@
 import * as pixi from 'pixi.js';
 import Floor from './terrain/Floor';
 import Wall from './terrain/Wall';
+import Terrain from './terrain/Terrain';
 import Player from './agents/Player';
 import Zombie from './agents/Zombie';
 import { rend } from '../stage';
 
 export default class Game {
 
-	terrain: Array<Array<Object>>;
+	terrain: Array<Array<Terrain>>;
 	display: pixi.Container;
 	player: Player;
 	zombies: Array<Zombie>;
 
-	constructor(data, stage) {
+	constructor(data, stage:pixi.Container) {
 		this.display = new pixi.Container();
 		stage.addChild(this.display);
 		this.initTerrain(data.terrain);
@@ -20,14 +21,14 @@ export default class Game {
 		this.initZombies(data.zombies);
 	}
 
-	initTerrain(terrain) {
+	initTerrain(terrain:Array<Array<string>>) {
 		this.terrain = []
 		for(let i = 0; i < terrain.length; i++) {
-			let row = terrain[i];
+			let row:Array<string> = terrain[i];
 			this.terrain.push([]);
 			for(let j = 0; j < row.length; j++) {
-				let type = row[j];
-				let tile
+				let type:string = row[j];
+				let tile:Terrain;
 				if(type === 'floor') {
 					tile = new Floor(j, i);
 				} else if(type === 'wall') {
@@ -47,7 +48,7 @@ export default class Game {
 	initZombies(data) {
 		this.zombies = [];
 		for(let zombieData of data) {
-			let zombie = new Zombie(zombieData.x, zombieData.y, this)
+			let zombie:Zombie = new Zombie(zombieData.x, zombieData.y, this)
 			this.zombies.push(zombie);
 			this.display.addChild(zombie.display);
 		}

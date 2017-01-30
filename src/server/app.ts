@@ -7,7 +7,7 @@ import * as bodyParser from 'body-parser';
 
 import index from './routes';
 
-declare var __dirname:string;
+declare const __dirname:string;
 
 const app:express.Express = express();
 

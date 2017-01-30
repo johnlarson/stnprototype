@@ -5,13 +5,13 @@ import io from './io';
 
 declare const process;
 
-const DEFAULT_PORT = 3000
+const DEFAULT_PORT = 3000;
 
-let server;
-let port;
+let server:http.Server;
+let port:number;
 
 export function createServer() {
-    let defaultPortString = Number(DEFAULT_PORT);
+    let defaultPortString:number = Number(DEFAULT_PORT);
     port = normalizePort(process.env.PORT || defaultPortString);
     app.set('port', port);
     server = http.createServer(app);
@@ -23,7 +23,7 @@ export function createServer() {
 }
 
 function normalizePort(val) {
-    let port = parseInt(val, 10);
+    let port:number = parseInt(val, 10);
     if (isNaN(port)) {
         return val;
     }
@@ -37,7 +37,7 @@ function onServerError(error) {
     if (error.syscall !== 'listen') {
         throw error;
     }
-    let bind = typeof port === 'string'
+    let bind:string = typeof port === 'string'
         ? 'Pipe ' + port
         : 'Port ' + port;
     switch (error.code) {
@@ -56,7 +56,7 @@ function onServerError(error) {
 
 function onServerListening() {
     let addr = server.address();
-    let bind = typeof addr === 'string'
+    let bind:string = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
     debug('stn:server')('Listening on ' + bind);

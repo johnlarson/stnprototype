@@ -1,11 +1,12 @@
 import * as pixi from 'pixi.js';
+import Terrain from './Terrain';
 
-export default class Floor {
+export default class Floor implements Terrain {
 
 	x: number;
 	y: number;
 
-	constructor(x, y) {
+	constructor(x:number, y:number) {
 		this.x = x;
 		this.y = y;
 	}

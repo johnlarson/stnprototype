@@ -1,5 +1,6 @@
 import * as pixi from 'pixi.js';
 import Agent from './Agent';
+import Game from '../Game';
 
 export default class Player extends Agent {
 
@@ -10,7 +11,7 @@ export default class Player extends Agent {
 		'40': 'goDown'
 	}
 
-	constructor(x, y, game) {
+	constructor(x:number, y:number, game:Game) {
 		super(x, y, game);
 		window.addEventListener('keydown', e => {
 			if(e.keyCode in Player.keyBindings) {

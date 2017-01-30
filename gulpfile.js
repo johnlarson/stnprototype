@@ -76,8 +76,6 @@ gulp.task('build', () => {
 
 gulp.task('bundle', ['build'], callback => {
 	let globArray = glob.sync('./build/**/main.js');
-	console.log('GLOB');
-	console.log(globArray);
 	return webpack({
 		entry: glob.sync('./build/**/main.js'),
 		output: {
@@ -94,11 +92,8 @@ gulp.task('bundle', ['build'], callback => {
 });
 
 gulp.task('server', ['start-dev-server'], () => {
-	console.log('SERVER');
     watch('src/**/*.ts', () => {
-    	console.log('WATCH');
 		server.terminate(() => {
-			console.log('TERMINATED');
 			gulp.start('start-dev-server');
 			gulp.start('copy');
 			gulp.start('bundle');

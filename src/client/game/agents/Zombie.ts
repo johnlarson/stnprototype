@@ -1,13 +1,13 @@
 import * as pixi from 'pixi.js';
 import Agent from './Agent';
+import Game from '../Game';
 
 declare const setTimeout;
 
 export default class Zombie extends Agent {
 
-	constructor(x, y, game) {
+	constructor(x:number, y:number, game:Game) {
 		super(x, y, game);
-		window.z = this;
 		setTimeout(this.runAI.bind(this), 1000);
 	}
 
@@ -16,7 +16,7 @@ export default class Zombie extends Agent {
 	}
 
 	runAI() {
-		setTimeout(this.runAI.bind(this), 1000);
+		setTimeout(this.runAI.bind(this), 500);
 		this.ai();
 	}
 
