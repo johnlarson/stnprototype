@@ -1,7 +1,6 @@
 "use strict";
 
 const gulp = require('gulp');
-const debug = require('debug')('stn:server');
 const http = require('http');
 const watch = require('gulp-watch');
 const exclude = require('gulp-ignore').exclude;
@@ -56,53 +55,6 @@ gulp.task('server', ['start-dev-server'], () => {
 });
 
 gulp.task('start-dev-server', ['bundle'], () => {
-	let app = require('./dist/server/app').default;
-    let defaultPortString = Number.parseInt(DEFAULT_PORT);
-    port = normalizePort(process.env.PORT || defaultPortString);
-    app.set('port', port);
-    server = http.createServer(app);
-    enableTerminate(server);
-    server.listen(port);
-    server.on('error', onServerError);
-    server.on('listening', onServerListening);
+	require('./dist/server');
 });
 
-function normalizePort(val) {
-	let port = parseInt(val, 10);
-	if (isNaN(port)) {
-		return val;
-	}
-	if (port >= 0) {
-		return port;
-	}
-	return false;
-}
-
-function onServerError(error) {
-	if (error.syscall !== 'listen') {
-		throw error;
-	}
-	let bind = typeof port === 'string'
-		? 'Pipe ' + port
-		: 'Port ' + port;
-	switch (error.code) {
-		case 'EACCES':
-			console.error(bind + ' requires elevated privileges');
-			process.exit(1);
-			break;
-		case 'EADDRINUSE':
-			console.error(bind + ' is already in use');
-			process.exit(1);
-			break;
-		default:
-			throw error;
-	}
-}
-
-function onServerListening() {
-	let addr = server.address();
-	let bind = typeof addr === 'string'
-		? 'pipe ' + addr
-		: 'port ' + addr.port;
-	debug('Listening on ' + bind);
-}
