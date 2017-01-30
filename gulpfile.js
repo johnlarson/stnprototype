@@ -14,6 +14,7 @@ const babel = require('gulp-babel');
 const enableTerminate = require('server-terminate');
 const typescript = require('gulp-typescript');
 const sourcemaps = require('gulp-sourcemaps');
+const glob = require('glob');
 
 require('source-map-support').install();
 
@@ -24,7 +25,7 @@ let port;
 
 gulp.task('default', ['dev']);
 
-gulp.task('dev', ['copy', 'server']);
+gulp.task('dev', ['copy', 'bundle', 'server']);
 
 gulp.task('copy', () => {
 	return gulp.src(['src/**/*', 'src/**/.*'])
@@ -33,8 +34,8 @@ gulp.task('copy', () => {
 		.pipe(gulp.dest('dist'));
 });
 
-gulp.task('bundle', callback => {
-	return gulp.src('src/**/*.ts')
+gulp.task('compile-server', ['compile-shared'], () => {
+	return gulp.src('src/server/**/*.ts')
 		.pipe(sourcemaps.init())
 		.pipe(typescript({
 			sourceMap: true,
@@ -43,7 +44,50 @@ gulp.task('bundle', callback => {
 		}))
 		.js
 		.pipe(sourcemaps.write())
-		.pipe(gulp.dest('dist'));
+		.pipe(gulp.dest('dist/server'));
+});
+
+gulp.task('compile-shared', () => {
+	return gulp.src('src/shared/**/*.ts')
+		.pipe(sourcemaps.init())
+		.pipe(typescript({
+			sourceMap: true,
+			target: 'es5',
+			moduleResolution: 'node'    
+		}))
+		.js
+		.pipe(sourcemaps.write())
+		.pipe(gulp.dest('dist/shared'));
+});
+
+gulp.task('build', () => {
+	return gulp.src('src/client/**/*.ts')
+		.pipe(sourcemaps.init())
+		.pipe(typescript({
+			sourceMap: true,
+			target: 'es5',
+			moduleResolution: 'node'    
+		}))
+		.js
+		.pipe(sourcemaps.write())
+		.pipe(gulp.dest('build'));
+});
+
+gulp.task('bundle', ['build'], callback => {
+	let globArray = glob.sync('./build/**/main.js');
+	console.log('GLOB');
+	console.log(globArray);
+	return webpack({
+		entry: glob.sync('./build/**/main.js'),
+		output: {
+			path: path.join(__dirname, 'dist/client'),
+			filename: '[name].js',
+		}
+	},
+	(err, stats) => {
+		gutil.log('[webpack]', stats.toString({}));
+		callback();
+	});
 });
 
 gulp.task('server', ['start-dev-server'], () => {
@@ -54,7 +98,7 @@ gulp.task('server', ['start-dev-server'], () => {
 	});
 });
 
-gulp.task('start-dev-server', ['bundle'], () => {
+gulp.task('start-dev-server', ['compile-server'], () => {
 	require('./dist/server');
 });
 
