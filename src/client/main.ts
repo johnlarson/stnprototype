@@ -1,4 +1,4 @@
-import socketIO from 'socket.io-client';
+import * as socketIO from 'socket.io-client';
 
 let io = socketIO('http://localhost:3000');
 
