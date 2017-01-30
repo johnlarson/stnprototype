@@ -4,6 +4,7 @@
 - clone the repository
 - go to the repository root (the one with README.md in it) on the command line
 - run `npm install`
+- run `npm install -g gulp`
 - run `gulp`
 - open a browser (I've only tried it in Chrome)
 - go to 'http://localhost:3000'.
