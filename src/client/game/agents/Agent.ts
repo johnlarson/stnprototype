@@ -26,19 +26,19 @@ export default class Agent {
 	}
 
 	goLeft() {
-		this.tryMove(this.x - 1, this.y);
+		return this.tryMove(this.x - 1, this.y);
 	}
 
 	goUp() {
-		this.tryMove(this.x, this.y - 1);
+		return this.tryMove(this.x, this.y - 1);
 	}
 
 	goRight() {
-		this.tryMove(this.x + 1, this.y);
+		return this.tryMove(this.x + 1, this.y);
 	}
 
 	goDown() {
-		this.tryMove(this.x, this.y + 1);
+		return this.tryMove(this.x, this.y + 1);
 	}
 
 
@@ -47,7 +47,9 @@ export default class Agent {
 			this.x = x;
 			this.y = y;
 			this.updateDisplay();
+			return true;
 		}
+		return false;
 	}
 
 	getSprite() {}
