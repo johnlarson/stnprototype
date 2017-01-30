@@ -1,6 +1,6 @@
 import * as pixi from 'pixi.js';
 import Game from '../Game';
-import Floor from '../terrain/Floor';
+import Wall from '../terrain/Wall';
 
 export default class Agent {
 
@@ -41,15 +41,17 @@ export default class Agent {
 		return this.tryMove(this.x, this.y + 1);
 	}
 
-
 	tryMove(x, y) {
-		if(this.game.terrain[y][x] instanceof Floor) {
-			this.x = x;
-			this.y = y;
-			this.updateDisplay();
-			return true;
+		let game = this.game;
+		if(game.terrain[y][x] instanceof Wall) return false;
+		if(x === game.player.x && y === game.player.y) return false;
+		for(let zombie of game.zombies) {
+			if(x === zombie.x && y === zombie.y) return false;
 		}
-		return false;
+		this.x = x;
+		this.y = y;
+		this.updateDisplay();
+		return true;
 	}
 
 	getSprite() {}
